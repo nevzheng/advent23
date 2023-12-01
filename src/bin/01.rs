@@ -3,7 +3,7 @@ advent_of_code::solution!(1);
 #[macro_use]
 extern crate lazy_static;
 
-use std::collections::HashMap;
+use std::{collections::HashMap, u128::MAX};
 
 lazy_static! {
     static ref WORD_VALUES: HashMap<&'static str, u32> = {
@@ -43,13 +43,16 @@ fn get_word_value(current_word: &str) -> Option<u32> {
     WORD_VALUES.get(current_word).copied()
 }
 
+// No number word is longer than five.
+const MAX_WORD_LENGTH: usize = 5;
+
 fn line_value_words(line: &str) -> Option<u32> {
     let mut digits: Vec<u32> = vec![];
 
     for i in 0..line.len() {
         for j in i..=line.len() {
             let slice = &line[i..j];
-            if slice.len() > 5 {
+            if slice.len() > MAX_WORD_LENGTH {
                 continue;
             }
             if let Some(val) = get_word_value(slice) {
