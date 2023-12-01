@@ -3,7 +3,7 @@ advent_of_code::solution!(1);
 #[macro_use]
 extern crate lazy_static;
 
-use std::{collections::HashMap, u128::MAX};
+use std::collections::{HashMap, HashSet};
 
 lazy_static! {
     static ref WORD_VALUES: HashMap<&'static str, u32> = {
@@ -18,6 +18,30 @@ lazy_static! {
         m.insert("seven", 7);
         m.insert("eight", 8);
         m.insert("nine", 9);
+
+        m
+    };
+}
+
+lazy_static! {
+    static ref VALID_STARTS: HashSet<char> = {
+        let mut m = HashSet::new();
+
+        m.insert('1');
+        m.insert('2');
+        m.insert('3');
+        m.insert('4');
+        m.insert('5');
+        m.insert('6');
+        m.insert('7');
+        m.insert('8');
+        m.insert('9');
+        m.insert('o');
+        m.insert('t');
+        m.insert('f');
+        m.insert('s');
+        m.insert('e');
+        m.insert('n');
 
         m
     };
@@ -50,11 +74,25 @@ fn line_value_words(line: &str) -> Option<u32> {
     let mut digits: Vec<u32> = vec![];
 
     for i in 0..line.len() {
+        // Prune Invalid starts.
+        if !VALID_STARTS.contains(&line.chars().nth(i)?) {
+            continue;
+        }
+
         for j in i..=line.len() {
             let slice = &line[i..j];
+            // Skip slices longer than the any possible match.
             if slice.len() > MAX_WORD_LENGTH {
                 continue;
             }
+
+            // Single Char Digit.
+            if let Ok(digit) = slice.parse::<u32>() {
+                digits.push(digit);
+                // Prune searches that start with a digit.
+                continue;
+            }
+
             if let Some(val) = get_word_value(slice) {
                 digits.push(val);
             }
