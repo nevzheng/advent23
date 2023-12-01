@@ -48,8 +48,12 @@ fn line_value_words(line: &str) -> Option<u32> {
 
     for i in 0..line.len() {
         for j in i..=line.len() {
-            let slice = &line[i..j];
+            // Digit names can't be longer than 5. stop exploring.
+            if (j - i + 1) > 5 {
+                continue;
+            }
 
+            let slice = &line[i..j];
             if let Some(val) = get_word_value(slice) {
                 digits.push(val);
             }
